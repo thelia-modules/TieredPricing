@@ -1,0 +1,117 @@
+<div class="form-container">
+    <h2>{intl l="Tiered pricing" d='tieredpricing.bo.default'}</h2>
+    {form name="tieredpricing_form_product_tier_discount_form"}
+        <form action="{url path="/admin/module/TieredPricing/product_tier/add"}" method="POST">
+            {form_hidden_fields form=$form}
+
+            {if $form_error}
+                <div class="alert alert-danger">{$form_error_message nofilter}</div>
+            {/if}
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>
+                        {intl l="New rule" d='tieredpricing.bo.default'}
+                    </h3>
+                </div>
+                {form_field form=$form field="product_id"}
+                    <input type="hidden" value="{$productId}" name="{$name}">
+                {/form_field}
+                <div class="col-md-6">
+                    {form_field form=$form field="product_sale_elements_id"}
+                        <label for="{$name}">
+                            {intl l="Combinations" d='tieredpricing.bo.default'}
+                        </label>
+                        <select  class="form-control" name="{$name}" id="{$name}">
+                            <option value="all" selected>{intl l="All combinations"}</option>
+                            {loop name="pse" type="product_sale_elements" product="$productId"}
+                                <option value="{$ID}">{$REF}{loop name="combi" type="attribute_combination" product_sale_elements="$ID"} | {$ATTRIBUTE_TITLE} : {$ATTRIBUTE_AVAILABILITY_TITLE}{/loop}</option>
+                            {/loop}
+                        </select>
+                    {/form_field}
+                </div>
+                <div class="col-md-2">
+                    {form_field form=$form field="tier_quantity"}
+                        <label for="{$name}">
+                            {intl l="Tier quantity" d='tieredpricing.bo.default'}
+                        </label>
+                        <input id="{$name}" type="number" name="{$name|default: 2}" class="form-control" required>
+                    {/form_field}
+                </div>
+                <div class="col-md-2">
+                    {form_field form=$form field="discount_percent"}
+                        <label for="{$name}">
+                            {intl l="Discount percent" d='tieredpricing.bo.default'}
+                        </label>
+                        <div class="input-group">
+                            <input id="{$name}" type="number" name="{$name|default: 5}" class="form-control" required>
+                            <span class="input-group-addon">%</span>
+                        </div>
+                    {/form_field}
+                </div>
+                <div class="col-md-2">
+                    <br>
+                    <button type="submit" class="btn btn-block btn-success">{intl l="Add" d="tieredpricing.bo.default"}</button>
+                </div>
+            </div>
+        </form>
+    {/form}
+
+    {ifloop rel="product_tier_discount_loop"}
+        <hr>
+        <br>
+        <div class="row">
+            <div class="col-md-12">
+                <h3>
+                    {intl l="Existing rules" d='tieredpricing.bo.default'}
+                </h3>
+            </div>
+            {loop type="generic" name="product_tier_discount_loop" table_name="product_tier_discount" filters="product_id:{$productId}"}
+                {$productSaleElementsId = $PRODUCT_SALE_ELEMENTS_ID}
+                {form name="tieredpricing_form_product_tier_discount_form"}
+                    <form action="{url path="/admin/module/TieredPricing/product_tier/%id" id={$ID}}" method="POST">
+                        {form_hidden_fields form=$form}
+
+                        {if $form_error}
+                            <div class="alert alert-danger">{$form_error_message nofilter}</div>
+                        {/if}
+                            {form_field form=$form field="product_id"}
+                                <input type="hidden" value="{$productId}" name="{$name}">
+                            {/form_field}
+                            <div class="col-md-6">
+                                {form_field form=$form field="product_sale_elements_id"}
+                                    <select  class="form-control" name="{$name}" id="{$name}">
+                                        <option value="all" {if null === $productSaleElementsId}selected{/if}>{intl l="All combinations"}</option>
+                                        {loop name="pse" type="product_sale_elements" product="$productId"}
+                                            <option value="{$ID}" {if $ID === $productSaleElementsId}selected{/if}>{$REF}{loop name="combi" type="attribute_combination" product_sale_elements="$ID"} | {$ATTRIBUTE_TITLE} : {$ATTRIBUTE_AVAILABILITY_TITLE}{/loop}</option>
+                                        {/loop}
+                                    </select>
+                                {/form_field}
+                            </div>
+                            <div class="col-md-2">
+                                {form_field form=$form field="tier_quantity"}
+                                    <input id="{$name}" type="number" name="{$name|default: 2}" class="form-control" required value="{$TIER_QUANTITY}">
+                                {/form_field}
+                            </div>
+                            <div class="col-md-2">
+                                {form_field form=$form field="discount_percent"}
+                                    <div class="input-group">
+                                        <input id="{$name}" type="number" name="{$name|default: 5}" class="form-control" required value="{$DISCOUNT_PERCENT}">
+                                        <span class="input-group-addon">%</span>
+                                    </div>
+                                {/form_field}
+                            </div>
+                            <div class="col-md-1">
+                                <button type="submit" class="btn btn-block btn-primary">{intl l="Save" d="tieredpricing.bo.default"}</button>
+                            </div>
+                            <div class="col-md-1">
+                                <a href="{url path="/admin/module/TieredPricing/product_tier/delete/%id" id={$ID}}" class="btn btn-block btn-danger">{intl l="Delete" d="tieredpricing.bo.default"}</a>
+                            </div>
+                    </form>
+                {/form}
+                <div class="col-md-12">
+                    <br>
+                </div>
+            {/loop}
+        </div>
+    {/ifloop}
+</div>
