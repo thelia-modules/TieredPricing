@@ -78,8 +78,7 @@ class CartListener implements EventSubscriberInterface
             },
             0
         );
-        $cartItem = $cartEvent->getCartItem();
-        // Firstly check for tier directly on pse
+
         /** @var ProductTierDiscount $tierDiscount */
         foreach ($tierDiscounts as $tierDiscount) {
             if (null !== $tierDiscount->getProductSaleElementsId()) {
